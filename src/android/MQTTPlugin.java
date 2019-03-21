@@ -62,10 +62,11 @@ public class MQTTPlugin extends CordovaPlugin implements MqttCallback{
 
   public void connectionLost(Throwable cause){ 
 
+	Log.d(TAG, String.format("mqtt connectionLost(%s);", cause.getMessage()));
     final CordovaWebView webView_ = webView;
     cordova.getActivity().runOnUiThread(new Runnable() {
       public void run() {
-        webView_.loadUrl(String.format("javascript:mqtt.onOffline(%s);", cause.getLocalizedMessage()));
+        webView_.loadUrl(String.format("javascript:mqtt.onOffline();"));
       }
     });
 	}
