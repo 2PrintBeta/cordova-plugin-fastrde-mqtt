@@ -51,7 +51,7 @@ public class MQTTPlugin extends CordovaPlugin implements MqttCallback{
   private CallbackContext onUnsubscribeCallbackContext;
 
   public void deliveryComplete(IMqttDeliveryToken token) { 
-		JSONObject message = new JSONObject();
+		JSONObject message = new JSONObject(token);
     final String jsonString = message.toString();
     final CordovaWebView webView_ = webView;
     cordova.getActivity().runOnUiThread(new Runnable() {
@@ -62,7 +62,7 @@ public class MQTTPlugin extends CordovaPlugin implements MqttCallback{
 	}
 
   public void connectionLost(Throwable cause){ 
-		JSONObject message = new JSONObject();
+		JSONObject message = new JSONObject(cause);
     final String jsonString = message.toString();
     final CordovaWebView webView_ = webView;
     cordova.getActivity().runOnUiThread(new Runnable() {
@@ -177,10 +177,11 @@ public class MQTTPlugin extends CordovaPlugin implements MqttCallback{
           Log.d(TAG, "cleanSessionFlag: " + (connOpts.isCleanSession()?"true":"false"));
           Log.d(TAG, "protocolLevel: " + connOpts.getMqttVersion());
           Log.d(TAG, "ssl: " + (protocol.equals("ssl")?"true":"false"));
-          client.connect(connOpts);
+          
+		  client.setCallback((MqttCallback) self);  
+		  client.connect(connOpts);
 
-          client.setCallback((MqttCallback) self);  
-         	JSONObject ret = new JSONObject();
+          	JSONObject ret = new JSONObject();
 					ret.put("status", client.isConnected()?1:0);
           callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, ret));
         }catch(JSONException e){

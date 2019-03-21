@@ -417,8 +417,8 @@ var mqtt = {
 	onOnline: function () {
 		if(mqtt.debug_outputs)console.log("Hi i am online");
 	},
-	onOffline: function () {
-		console.log("On Offline");
+	onOffline: function (err) {
+		console.log("On Offline" + err);
 		//mqtt._reconnect();
 	},
 
