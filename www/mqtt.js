@@ -298,9 +298,9 @@ var mqtt = {
 							console.log("publishing failed : " + result.id);
 							mqtt.cache.transaction(
 								function (tx) {
-								console.log("resetting lock on " + result.id);
+								if(mqtt.debug_outputs)console.log("resetting lock on " + result.id);
 								tx.executeSql("UPDATE cache SET sending = 0 WHERE id = ?", [result.id], function (tx, res) {
-									console.log("lock resetted on " + result.id);
+									if(mqtt.debug_outputs)console.log("lock resetted on " + result.id);
 								}, function (error) {
 									console.log("lock NOT resetted on " + result.id);
 									return false;
