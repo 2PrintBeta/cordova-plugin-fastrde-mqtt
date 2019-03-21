@@ -358,56 +358,56 @@ var mqtt = {
 		if(mqtt.debug_outputs)console.log("onInit");
 	},
 	onInitError: function () {
-		if(mqtt.debug_outputs)console.error("onInitError");
+		console.error("onInitError");
 	},
 
 	onConnect: function () {
 		if(mqtt.debug_outputs)console.log("onConnect");
 	},
 	onConnectError: function () {
-		if(mqtt.debug_outputs)console.error("onConnectError");
+		console.error("onConnectError");
 	},
 
 	onReconnect: function () {
 		if(mqtt.debug_outputs)console.log("onReconnect");
 	},
 	onReconnectError: function () {
-		if(mqtt.debug_outputs)console.error("onReconnectError");
+		console.error("onReconnectError");
 	},
 
 	onDisconnect: function () {
 		if(mqtt.debug_outputs)console.log("onDisconnect");
 	},
 	onDisconnectError: function () {
-		if(mqtt.debug_outputs)console.log("onDisconnectError");
+		console.log("onDisconnectError");
 	},
 
 	onPublish: function (cacheId) {
 		if(mqtt.debug_outputs)console.log("onPublish " + cacheId);
 	},
 	onPublishError: function (error, id) {
-		if(mqtt.debug_outputs)console.log("onPublishError " + id + ": ", error);
+		console.log("onPublishError " + id + ": ", error);
 	},
 
 	onSubscribe: function () {
 		if(mqtt.debug_outputs)console.log("onSubscribe");
 	},
 	onSubscribeError: function () {
-		if(mqtt.debug_outputs)console.log("onSubscribeError");
+		console.log("onSubscribeError");
 	},
 
 	onUnsubscribe: function () {
 		if(mqtt.debug_outputs)console.log("onUnsubscribe");
 	},
 	onUnsubscribeError: function () {
-		if(mqtt.debug_outputs)console.log("onUnsubscribeError");
+		console.log("onUnsubscribeError");
 	},
 
 	onMessage: function (topic, message, packet) {
 		if(mqtt.debug_outputs)console.log("onMessage");
 	},
 	onMessageError: function (topic, message, packet) {
-		if(mqtt.debug_outputs)console.log("onMessageError");
+		console.log("onMessageError");
 	},
 
 	onDelivered: function () {
@@ -418,7 +418,7 @@ var mqtt = {
 		if(mqtt.debug_outputs)console.log("Hi i am online");
 	},
 	onOffline: function () {
-		if(mqtt.debug_outputs)console.log("On Offline");
+		console.log("On Offline");
 		//mqtt._reconnect();
 	},
 
