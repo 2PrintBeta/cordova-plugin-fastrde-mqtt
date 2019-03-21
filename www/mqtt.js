@@ -295,7 +295,7 @@ var mqtt = {
 							mqtt.onPublish(message);
 						},
 							function publishError(result) {
-							console.log("publishing failed : " + result.id);
+							console.log("publishing failed : " + result.id + " " +result.error);
 							mqtt.cache.transaction(
 								function (tx) {
 								if(mqtt.debug_outputs)console.log("resetting lock on " + result.id);
