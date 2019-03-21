@@ -6,7 +6,7 @@
     "id": "cordova-plugin-fastrde-mqtt",
     "platforms": [
       "android",
-			"ios"
+      "ios"
     ]
   },
   "repository": {
@@ -21,9 +21,9 @@
     "ecosystem:cordova",
     "cordova-android",
     "cordova-ios",
-		"mqtt",
-		"push",
-		"iot"
+    "mqtt",
+    "push",
+    "iot"
   ],
   "author": {
     "name": "Fabian Strachanski",
