@@ -1,5 +1,6 @@
 var mqtt = {
 	debug_deleteTable: true,
+	debug_outputs: false,
 	host: null,
 	port: null,
 	qos: null,
@@ -91,7 +92,7 @@ var mqtt = {
 		switch (evt) {
 		case 'init':
 			mqtt.onInit = optional(success, function () {
-					console.log("success");
+					if(debug_outputs)console.log("success");
 				});
 			mqtt.onInitError = optional(fail, function () {
 					console.log("fail");
@@ -99,7 +100,7 @@ var mqtt = {
 			break;
 		case 'connect':
 			mqtt.onConnect = optional(success, function () {
-					console.log("success");
+					if(debug_outputs)console.log("success");
 				});
 			mqtt.onConnectError = optional(fail, function () {
 					console.log("fail");
@@ -107,7 +108,7 @@ var mqtt = {
 			break;
 		case 'disconnect':
 			mqtt.onDisconnect = optional(success, function () {
-					console.log("success");
+					if(debug_outputs)console.log("success");
 				});
 			mqtt.onDisconnectError = optional(fail, function () {
 					console.log("fail");
@@ -115,7 +116,7 @@ var mqtt = {
 			break;
 		case 'reconnect':
 			mqtt.onReconnect = optional(success, function () {
-					console.log("success");
+					if(debug_outputs)console.log("success");
 				});
 			mqtt.onReconnectError = optional(fail, function () {
 					console.log("fail");
@@ -123,7 +124,7 @@ var mqtt = {
 			break;
 		case 'publish':
 			mqtt.onPublish = optional(success, function () {
-					console.log("success");
+					if(debug_outputs)console.log("success");
 				});
 			mqtt.onPublishError = optional(fail, function () {
 					console.log("fail");
@@ -131,7 +132,7 @@ var mqtt = {
 			break;
 		case 'subscribe':
 			mqtt.onSubscribe = optional(success, function () {
-					console.log("success");
+					if(debug_outputs)console.log("success");
 				});
 			mqtt.onSubscribeError = optional(fail, function () {
 					console.log("fail");
@@ -139,7 +140,7 @@ var mqtt = {
 			break;
 		case 'unsubscribe':
 			mqtt.onUnsubscribe = optional(success, function () {
-					console.log("success");
+					if(debug_outputs)console.log("success");
 				});
 			mqtt.onUnsubscribeError = optional(fail, function () {
 					console.log("fail");
@@ -147,12 +148,12 @@ var mqtt = {
 			break;
 		case 'message':
 			mqtt.onMessage = optional(success, function () {
-					console.log("success");
+					if(debug_outputs)console.log("success");
 				});
 			break;
 		case 'delivered':
 			mqtt.onDelivered = optional(success, function () {
-					console.log("delivered");
+					if(debug_outputs)console.log("delivered");
 				});
 			break;
 		case 'offline':
@@ -220,7 +221,7 @@ var mqtt = {
 		var retain = (isset(options.retain)) ? options.retain : false;
 
 		if (mqtt.offlineCaching && mqtt.cache != null) {
-			console.log("Cache Publishing " + message);
+			if(debug_outputs)console.log("Cache Publishing " + message);
 			mqtt.cache.transaction(function (tx) {
 				tx.executeSql("INSERT INTO cache(topic, message, qos, retain, sending) VALUES(?,?,?,?,?)", [topic, message, qos, retain, 0],
 					function insertSuccess(tx, res) {
@@ -236,7 +237,7 @@ var mqtt = {
 				return false;
 			});
 		} else {
-			console.log("Direct Publishing " + message);
+			if(debug_outputs)console.log("Direct Publishing " + message);
 			mqtt._publish(null, topic, message, qos, retain,
 				function (message) {
 				mqtt.onPublish(message);
@@ -261,25 +262,25 @@ var mqtt = {
 	_publishCached: function (tx) {
 		tx.executeSql("SELECT * FROM cache WHERE sending = 0 ORDER BY id", [],
 			function selectSuccess(tx, res) {
-			console.log("Found " + res.rows.length + " cached Messages");
+			if(debug_outputs)console.log("Found " + res.rows.length + " cached Messages");
 			for (var i = 0; i < res.rows.length; i++) {
 				(function (i, tx) {
 					var message = res.rows.item(i);
-					console.log("Publishing: " + message.id + "| Topic:" + message.topic + "| Message:" + message.message + "| QOS:" + message.qos + "| Retain:" + message.retain);
+					if(debug_outputs)console.log("Publishing: " + message.id + "| Topic:" + message.topic + "| Message:" + message.message + "| QOS:" + message.qos + "| Retain:" + message.retain);
 					tx.executeSql("UPDATE cache SET sending = 1 WHERE id = ?", [message.id],
 						function updateSuccess(tx, res) {
-						console.log("locked Message " + message.id);
+						if(debug_outputs)console.log("locked Message " + message.id);
 						mqtt._publish(message.id, message.topic, message.message, message.qos, message.retain,
 
 							function publishSuccess(message) {
 							var id = message.cacheId;
-							console.log("Message " + id + " published");
+							if(debug_outputs)console.log("Message " + id + " published");
 							mqtt.cache.transaction(
 								function (tx) {
-								console.log("Deleting Message " + id + " from cache");
+								if(debug_outputs)console.log("Deleting Message " + id + " from cache");
 								tx.executeSql("DELETE FROM cache WHERE id = ?", [id],
 									function deleteSuccess(tx, res) {
-									console.log("Deleted Message " + id + " from cache");
+									if(debug_outputs)console.log("Deleted Message " + id + " from cache");
 								},
 									function deleteError(err) {
 									console.error("Could not delete Message. Error: " + err);
@@ -330,7 +331,7 @@ var mqtt = {
 		console.log("js subscribe");
 		cordova.exec(
 			function (success) {
-			console.log("js subscribe success");
+			if(debug_outputs)console.log("js subscribe success");
 			mqtt.onSubscribe();
 		},
 			function (err) {
@@ -343,7 +344,7 @@ var mqtt = {
 		var topic = (isset(options.topic)) ? options.topic : "public";
 		cordova.exec(
 			function (success) {
-			console.log("js unsubscribe success");
+			if(debug_outputs)console.log("js unsubscribe success");
 			mqtt.onUnsubscribe();
 		},
 			function (err) {
@@ -354,70 +355,70 @@ var mqtt = {
 	},
 
 	onInit: function () {
-		console.log("onInit");
+		if(debug_outputs)console.log("onInit");
 	},
 	onInitError: function () {
-		console.error("onInitError");
+		if(debug_outputs)console.error("onInitError");
 	},
 
 	onConnect: function () {
-		console.log("onConnect");
+		if(debug_outputs)console.log("onConnect");
 	},
 	onConnectError: function () {
-		console.error("onConnectError");
+		if(debug_outputs)console.error("onConnectError");
 	},
 
 	onReconnect: function () {
-		//console.log("onReconnect");
+		if(debug_outputs)console.log("onReconnect");
 	},
 	onReconnectError: function () {
-		console.error("onReconnectError");
+		if(debug_outputs)console.error("onReconnectError");
 	},
 
 	onDisconnect: function () {
-		console.log("onDisconnect");
+		if(debug_outputs)console.log("onDisconnect");
 	},
 	onDisconnectError: function () {
-		//console.log("onDisconnectError");
+		if(debug_outputs)console.log("onDisconnectError");
 	},
 
 	onPublish: function (cacheId) {
-		console.log("onPublish " + cacheId);
+		if(debug_outputs)console.log("onPublish " + cacheId);
 	},
 	onPublishError: function (error, id) {
-		console.log("onPublishError " + id + ": ", error);
+		if(debug_outputs)console.log("onPublishError " + id + ": ", error);
 	},
 
 	onSubscribe: function () {
-		console.log("onSubscribe");
+		if(debug_outputs)console.log("onSubscribe");
 	},
 	onSubscribeError: function () {
-		console.log("onSubscribeError");
+		if(debug_outputs)console.log("onSubscribeError");
 	},
 
 	onUnsubscribe: function () {
-		console.log("onUnsubscribe");
+		if(debug_outputs)console.log("onUnsubscribe");
 	},
 	onUnsubscribeError: function () {
-		console.log("onUnsubscribeError");
+		if(debug_outputs)console.log("onUnsubscribeError");
 	},
 
 	onMessage: function (topic, message, packet) {
-		console.log("onMessage");
+		if(debug_outputs)console.log("onMessage");
 	},
 	onMessageError: function (topic, message, packet) {
-		console.log("onMessageError");
+		if(debug_outputs)console.log("onMessageError");
 	},
 
 	onDelivered: function () {
-		console.log("onDelivered");
+		if(debug_outputs)console.log("onDelivered");
 	},
 
 	onOnline: function () {
-		console.log("Hi i am online");
+		if(debug_outputs)console.log("Hi i am online");
 	},
 	onOffline: function () {
-		console.log("On Offline");
+		if(debug_outputs)console.log("On Offline");
 		//mqtt._reconnect();
 	},
 
